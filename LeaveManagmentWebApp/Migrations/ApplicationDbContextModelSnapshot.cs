@@ -113,7 +113,7 @@ namespace LeaveManagmentWebApp.Migrations
                     b.Property<DateTime>("DataCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateModified")
+                    b.Property<DateTime>("DataModified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmployeeId")
@@ -141,10 +141,10 @@ namespace LeaveManagmentWebApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DaataModified")
+                    b.Property<DateTime>("DataCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DataCreated")
+                    b.Property<DateTime>("DataModified")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DefaultDays")
