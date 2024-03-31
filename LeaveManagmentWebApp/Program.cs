@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using LeaveManagmentWebApp.Configuration;
 using AutoMapper;
+using LeaveManagmentWebApp.Contracts;
+using LeaveManagmentWebApp.Repositories;
 
 
 
@@ -18,9 +20,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+// open a query close a query when is done 
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); // give a new connection when it called but when is finished it closed down
+builder.Services.AddScoped<iLeaveTypeRepositoty, LeaveTypeRepository>();
+// Add services to the container.
+
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
