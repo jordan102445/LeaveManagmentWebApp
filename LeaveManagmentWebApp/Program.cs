@@ -8,6 +8,8 @@ using LeaveManagmentWebApp.Configuration;
 using AutoMapper;
 using LeaveManagmentWebApp.Contracts;
 using LeaveManagmentWebApp.Repositories;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using LeaveManagmentWebApp.Services;
 
 
 
@@ -16,9 +18,12 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+// enable the roles,or the identityrole know we gonna add roles
 builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddTransient<IEmailSender>(s => new EmailSender("localhost", 25 , "no-reply@leavemanagment.com"));
 
 
 // open a query close a query when is done 
@@ -29,7 +34,6 @@ builder.Services.AddScoped<iLeaveTypeRepositoty, LeaveTypeRepository>();
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 builder.Services.AddControllersWithViews();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -46,6 +50,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
