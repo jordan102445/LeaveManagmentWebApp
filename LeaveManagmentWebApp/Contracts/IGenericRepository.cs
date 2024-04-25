@@ -10,7 +10,10 @@ namespace LeaveManagmentWebApp.Contracts
         Task<T> GetAsync(int? id);
         Task<List<T>> GetAllAsync(); // T vrakja class
 
-        Task<T> AddAsync(T entity); 
+        Task<T> AddAsync(T entity);
+
+        Task AddRangeAsync(List<T> entities);
+
 
         Task<bool> Exists(int id);
 

@@ -23,13 +23,17 @@ namespace LeaveManagmentWebApp.Controllers
        
         //private readonly ApplicationDbContext _context; // breach to our database
         private readonly IMapper _mapper;
+        private readonly ILeaveAllocationRepository leaveAllocationRepository;
         private readonly iLeaveTypeRepositoty leaveTypeRepository;
-        public LeaveTypesController(iLeaveTypeRepositoty leaveTypeRepositoty, IMapper mapper)
+        public LeaveTypesController(iLeaveTypeRepositoty leaveTypeRepositoty,
+            IMapper mapper , 
+            ILeaveAllocationRepository leaveAllocationRepository)
         {
 
            // _context = context; // connection of the database // Dependency injection se vika ova
             this.leaveTypeRepository = leaveTypeRepositoty;
             this._mapper = mapper;
+            this.leaveAllocationRepository = leaveAllocationRepository;
         }
 
         // GET: LeaveTypes
@@ -154,7 +158,6 @@ namespace LeaveManagmentWebApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //var leaveType = await _context.LeaveTypes.FindAsync(id);
@@ -165,8 +168,19 @@ namespace LeaveManagmentWebApp.Controllers
         }
 
         // private async Task <bool> LeaveTypeExists(int id)
-       // {
-            //return await leaveTypeRepository.Exists(id);
-       // }
+        // {
+        //return await leaveTypeRepository.Exists(id);
+        // }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AllocateLeave(int id ) // this is the name that the button will be looking for(from the form in index in LeaveTypes)
+        {
+            await leaveAllocationRepository.LeaveAllocation(id);
+            return RedirectToAction(nameof(Index));
+
+        }
+
+
     }
 }

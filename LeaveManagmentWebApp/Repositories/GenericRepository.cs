@@ -20,6 +20,13 @@ namespace LeaveManagmentWebApp.Repositories
 
         }
 
+        public async Task AddRangeAsync(List<T> entities) // better with add range then addAsync
+        {
+            await context.AddRangeAsync(entities);
+            await context.SaveChangesAsync();
+
+        }
+
         public async Task DeleteAsync(int id)
         {
             var entity = await GetAsync(id); // T is eaher LeaveType or LeaveAllocation or etc in the DbSet

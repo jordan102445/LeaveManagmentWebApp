@@ -29,6 +29,7 @@ builder.Services.AddTransient<IEmailSender>(s => new EmailSender("localhost", 25
 // open a query close a query when is done 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); // give a new connection when it called but when is finished it closed down
 builder.Services.AddScoped<iLeaveTypeRepositoty, LeaveTypeRepository>();
+builder.Services.AddScoped<ILeaveAllocationRepository, LeaveAllocationRepository>();
 // Add services to the container.
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
