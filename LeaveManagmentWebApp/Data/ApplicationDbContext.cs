@@ -29,7 +29,8 @@ namespace LeaveManagmentWebApp.Data
         //public DbSet<LeaveManagmentWebApp.Models.EmployeeAllocationVM> EmployeeAllocationVM { get; set; } = default!; same
         // public DbSet<LeaveManagmentWebApp.Models.EmployeeListVM> EmployeeListVM { get; set; } = default!;
         //Razor created this but it is not needed,because we dont need another data table with employees thats why we comment
-
         // DbSet properties for your application entities
+
+            public DbSet<LeaveRequest> LeaveRequests { get; set; }
     }
 }

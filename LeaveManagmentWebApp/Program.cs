@@ -23,6 +23,8 @@ builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireC
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddTransient<IEmailSender>(s => new EmailSender("localhost", 25 , "no-reply@leavemanagment.com"));
 
 
@@ -30,6 +32,7 @@ builder.Services.AddTransient<IEmailSender>(s => new EmailSender("localhost", 25
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); // give a new connection when it called but when is finished it closed down
 builder.Services.AddScoped<iLeaveTypeRepositoty, LeaveTypeRepository>();
 builder.Services.AddScoped<ILeaveAllocationRepository, LeaveAllocationRepository>();
+builder.Services.AddScoped<ILeaveRequestsRepository, LeaveRequestsRepository>();
 // Add services to the container.
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));

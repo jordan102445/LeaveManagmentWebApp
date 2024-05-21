@@ -22,6 +22,7 @@ namespace LeaveManagmentWebApp.Configuration.Entities
                     LastName = "Admin",
                     PasswordHash = hasher.HashPassword(null, "L@zinka22"),
                     EmailConfirmed = true
+            
 
                 },
                  new Employee
