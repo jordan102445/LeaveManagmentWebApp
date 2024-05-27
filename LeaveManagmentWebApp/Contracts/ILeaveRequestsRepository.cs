@@ -11,7 +11,7 @@ namespace LeaveManagmentWebApp.Contracts
 
         Task<LeaveRequestVM?> GetLeaveRequestAsync(int? id);
 
-        Task<List<LeaveRequest>> GetAllAsync(string employeeId);
+        Task<List<LeaveRequestVM>> GetAllAsync(string employeeId);
 
         Task CancelLeaveRquest(int leaveReqestId);
         Task ChangeApprovalStatus(int leaveRequestsId, bool approved);

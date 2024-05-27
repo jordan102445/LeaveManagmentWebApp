@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using LeaveManagmentWebApp.Contracts;
 using LeaveManagmentWebApp.Data;
 using LeaveManagmentWebApp.Models;
@@ -14,16 +15,19 @@ namespace LeaveManagmentWebApp.Repositories
         private readonly IHttpContextAccessor httpContextAccessor; // to get access of the type of the user information like id 
         private readonly UserManager<Employee> userManager;
         private readonly ILeaveAllocationRepository leaveAllocationRepository;
+        private readonly AutoMapper.IConfigurationProvider configurationProvider;
 
         public LeaveRequestsRepository(ApplicationDbContext context, IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             ILeaveAllocationRepository leaveAllocationRepository,
+            AutoMapper.IConfigurationProvider configurationProvider,
             UserManager<Employee> userManager) : base(context)
         {
             this.context = context;
             this.mapper = mapper;
             this.httpContextAccessor = httpContextAccessor;
             this.userManager = userManager;
+            this.configurationProvider = configurationProvider;
             this.leaveAllocationRepository = leaveAllocationRepository;
         }
 
@@ -55,9 +59,11 @@ namespace LeaveManagmentWebApp.Repositories
             return true;
         }
 
-        public async Task<List<LeaveRequest>> GetAllAsync(string employeeId)
+        public async Task<List<LeaveRequestVM>> GetAllAsync(string employeeId)
         {
-            return await context.LeaveRequests.Where(q => q.RequestingEmployeeId == employeeId).ToListAsync();
+            return await context.LeaveRequests.Where(q => q.RequestingEmployeeId == employeeId)
+                .ProjectTo<LeaveRequestVM>(configurationProvider)
+                .ToListAsync();
         }
 
         public async Task<EmployeeLeaveRequestViewVM> GetMyLeaveDetails()
@@ -66,7 +72,8 @@ namespace LeaveManagmentWebApp.Repositories
             var allocations = (await leaveAllocationRepository.GetEmployeeAllocations(user.Id)).LeaveAllocations;
             // if this function wasnt made,it will be writed all over again the query like the lampbda function q=>
             // .LeaveAllocations it is trated like a one big object like allocation.LeaveAllocations -> is the data of the user(emoloyee)
-            var requests = mapper.Map<List<LeaveRequestVM>>(await GetAllAsync(user.Id));
+            //var requests = mapper.Map<List<LeaveRequestVM>>(await GetAllAsync(user.Id));
+            var requests = await GetAllAsync(user.Id); // replace of mapper is project to above
             //var requests =await GetAllAsync(user.Id);
             var model = new EmployeeLeaveRequestViewVM(allocations, requests);
             return model;
@@ -77,6 +84,8 @@ namespace LeaveManagmentWebApp.Repositories
         {
             var leaveRequest = await GetAsync(leaveRequestsId); // get the request 
             leaveRequest.Approved = approved; // set it to be approved
+
+
             if (approved)
             {
                 var allocation = await leaveAllocationRepository.GetEmployeeAllocation(leaveRequest.RequestingEmployeeId, leaveRequest.LeaveTypeId);
@@ -88,6 +97,10 @@ namespace LeaveManagmentWebApp.Repositories
             }
 
             await UpdateAsync(leaveRequest);
+
+            var user = await userManager.FindByIdAsync(leaveRequest.RequestingEmployeeId);
+            var approvalStatus = approved ? "Approved" : "Declined";
+
         }
 
         // Ensure GetEmployeeAllocation method is correct
@@ -122,7 +135,7 @@ namespace LeaveManagmentWebApp.Repositories
             foreach (var leaveRequest in model.LeaveRequests)
             {
                 leaveRequest.Employee = mapper.Map<EmployeeListVM>(await userManager.FindByIdAsync(leaveRequest.RequestingEmployeeId));
-            }
+            } // zima gi site leave request za site emoloyees
 
             return (model);
         }

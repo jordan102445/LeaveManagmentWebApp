@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using LeaveManagmentWebApp.Constants;
 using LeaveManagmentWebApp.Contracts;
 using LeaveManagmentWebApp.Data;
@@ -13,16 +14,19 @@ namespace LeaveManagmentWebApp.Repositories
         private readonly ApplicationDbContext context;
         private readonly UserManager<Employee> userManager; // you need to interact direct with the user with userManager
         private readonly iLeaveTypeRepositoty leaveTypeRepositoty; // injection for to get DefaultDays  leaveType.DefaultDays
+        private readonly AutoMapper.IConfigurationProvider configurationProvider;
         private readonly IMapper mapper;
 
         public LeaveAllocationRepository(ApplicationDbContext context,
             UserManager<Employee> userManager, 
             iLeaveTypeRepositoty leaveTypeRepositoty,
+            AutoMapper.IConfigurationProvider configurationProvider,
             IMapper mapper) : base(context)
         {
             this.context = context;
             this.userManager = userManager;
             this.leaveTypeRepositoty = leaveTypeRepositoty;
+            this.configurationProvider = configurationProvider;
             this.mapper = mapper;
         }
 
@@ -38,12 +42,16 @@ namespace LeaveManagmentWebApp.Repositories
             var allocation = await context.LeaveAllocations
                  .Include(q => q.LeaveType)// we run the query to get the allocations , we inner join with leaveType
                  .Where(q => q.EmployeeId == employeeId) // where will always bring a collection into like in this example list
+                 .ProjectTo<LeaveAllocationVM>(configurationProvider) // it sees the data and do select of the data in same time,is optional
                  .ToListAsync(); // and we fillter with the employee that we are looking at 
             var employee = await userManager.FindByIdAsync(employeeId); // we fetch that employee record //details of the employee
 
             var employeeAllocationModel = mapper.Map<EmployeeAllocationVM>(employee); // get me the view model,please complete the mapping between employee allocationsvm and the data class
-            employeeAllocationModel.LeaveAllocations = mapper.Map<List<LeaveAllocationVM>>(allocation); // map the view allocations that we want to display
+            employeeAllocationModel.LeaveAllocations = allocation; // map the view allocations that we want to display(we return a view model here thats why we do the mapping)
+            //employeeAllocationModel.LeaveAllocations = mapper.Map<List<LeaveAllocationVM>>(allocation); // map the view allocations that we want to display
 
+
+            // we made the changes cause if we have 20 data of the employee username,firstname etc only got to map 5 of them and 15 is gonna go in a waste
             return employeeAllocationModel;
         }
 

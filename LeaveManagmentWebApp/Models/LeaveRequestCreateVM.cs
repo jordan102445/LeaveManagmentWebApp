@@ -9,15 +9,21 @@ namespace LeaveManagmentWebApp.Models
     {
         [Required]
         [Display(Name ="Start Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+
+        [DataType(DataType.Date)]
         public DateTime? StartDate { get; set; }
+
         [Required]
         [Display(Name = "End Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
         [Required]
         [Display(Name = "Leave Type")]
         public int LeaveTypeId { get; set; }
 
-        public SelectList? LeaveTypes { get; set; }  
+        public SelectList? LeaveTypes { get; set; }  // we use dropdown list for selectlist 
 
         [Display(Name ="Request Comments")]
         public string? RequestComments { get; set; }
