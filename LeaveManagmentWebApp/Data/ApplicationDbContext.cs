@@ -20,10 +20,25 @@ namespace LeaveManagmentWebApp.Data
             builder.ApplyConfiguration(new UserRoleSeedConfiguration());
 
         }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach(var item in base.ChangeTracker.Entries<BaseEntity>().Where(q => q.State == EntityState.Added 
+            || q.State == EntityState.Modified))
+            {
+                item.Entity.DataModified = DateTime.Now;
+
+                if(item.State == EntityState.Added)
+                {
+                   item.Entity.DataCreated = DateTime.Now;
+
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
+        }
         public DbSet<LeaveType> LeaveTypes { get; set; }
-        
-         public DbSet<LeaveAllocation> LeaveAllocations { get; set; }
-        public DbSet<LeaveManagmentWebApp.Models.EmployeeAllocationVM> EmployeeAllocationVM { get; set; } = default!;
+        public DbSet<LeaveAllocation> LeaveAllocations { get; set; }
+        public DbSet<EmployeeAllocationVM> EmployeeAllocationVM { get; set; } = default!;
 
         //public DbSet<LeaveManagmentWebApp.Models.EmployeeAllocationVM> EmployeeAllocationVM { get; set; } = default!;
         //public DbSet<LeaveManagmentWebApp.Models.EmployeeAllocationVM> EmployeeAllocationVM { get; set; } = default!; same

@@ -106,7 +106,7 @@ namespace LeaveManagmentWebApp.Migrations
                         {
                             Id = "d414042k-da1f-4e74-c555-415b07f89b27",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "83fb0d34-df4b-4582-aec0-1a6558ca1689",
+                            ConcurrencyStamp = "c169a9e0-1f0e-4eb6-91c8-dbd7b82f0e5e",
                             DateJointed = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@localhost.com",
@@ -116,9 +116,9 @@ namespace LeaveManagmentWebApp.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "admin@localhost.com",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM1L2d1YjUuu7u8aTNEfyRcl7jVfsaoV6J/avHkqNvTJCxXo4YM5DPIixWDtOT8TVw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJZvrpVLpfovQYR+gXBuzR5uGoeErVNcTO7gUZg1S+SjzNmeiLD4U8H2MO5VpHLVnw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b821daac-4568-448c-8645-e6b08eb522ae",
+                            SecurityStamp = "b8c2944d-4306-4999-b443-f923d7ecd215",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -126,7 +126,7 @@ namespace LeaveManagmentWebApp.Migrations
                         {
                             Id = "0kk1dc22-19f1-4216-9876-4f7a0f8fa5b4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5cdfb429-7e9e-4b81-89ea-a6f0a134ad08",
+                            ConcurrencyStamp = "5e99e166-24ca-48af-85d4-fcb2e5ca47d6",
                             DateJointed = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@localhost.com",
@@ -136,9 +136,9 @@ namespace LeaveManagmentWebApp.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@LOCALHOST.COM",
                             NormalizedUserName = "user@localhost.com",
-                            PasswordHash = "AQAAAAIAAYagAAAAENlcRBMEFHXKJlAFHaRUcdrR6AkeL7jMkJM6//TkSaeuaadsdmMuw7xIWxxqRIo07w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHhhH3pahTFcD7c/QtMoWrxmwV2AKu8WdhLNuEuVn34Rmui3bGSGKl0/l13x0JOV7w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bdb45942-13d7-4c0b-86c9-c17a826d684b",
+                            SecurityStamp = "df777afc-f5a0-4db5-afb9-5f6d5e3b53c4",
                             TwoFactorEnabled = false,
                             UserName = "user@localhost.com"
                         });
@@ -159,7 +159,6 @@ namespace LeaveManagmentWebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmployeeId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LeaveTypeId")
@@ -211,7 +210,6 @@ namespace LeaveManagmentWebApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequestingEmployeeId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -242,7 +240,6 @@ namespace LeaveManagmentWebApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -255,20 +252,16 @@ namespace LeaveManagmentWebApp.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("DateJointed")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateJointed")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

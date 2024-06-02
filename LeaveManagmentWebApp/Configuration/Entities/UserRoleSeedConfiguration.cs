@@ -18,6 +18,7 @@ namespace LeaveManagmentWebApp.Configuration.Entities
                  new IdentityUserRole<string>
                  {
 
+
                      RoleId = "0tc1bb22-19k1-7890-8075-4f7b0k8cc5c4", // UserRole from UserRoleSeed
                      UserId = "0kk1dc22-19f1-4216-9876-4f7a0f8fa5b4"  // UserID from UserSeed
                  }

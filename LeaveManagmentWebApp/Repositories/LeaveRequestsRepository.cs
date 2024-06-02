@@ -4,6 +4,7 @@ using LeaveManagmentWebApp.Contracts;
 using LeaveManagmentWebApp.Data;
 using LeaveManagmentWebApp.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveManagmentWebApp.Repositories
@@ -15,18 +16,22 @@ namespace LeaveManagmentWebApp.Repositories
         private readonly IHttpContextAccessor httpContextAccessor; // to get access of the type of the user information like id 
         private readonly UserManager<Employee> userManager;
         private readonly ILeaveAllocationRepository leaveAllocationRepository;
+        private readonly IEmailSender emailSender;
         private readonly AutoMapper.IConfigurationProvider configurationProvider;
 
         public LeaveRequestsRepository(ApplicationDbContext context, IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             ILeaveAllocationRepository leaveAllocationRepository,
             AutoMapper.IConfigurationProvider configurationProvider,
+            IEmailSender emailSender,
+        
             UserManager<Employee> userManager) : base(context)
         {
             this.context = context;
             this.mapper = mapper;
             this.httpContextAccessor = httpContextAccessor;
             this.userManager = userManager;
+            this.emailSender = emailSender;
             this.configurationProvider = configurationProvider;
             this.leaveAllocationRepository = leaveAllocationRepository;
         }
@@ -42,12 +47,24 @@ namespace LeaveManagmentWebApp.Repositories
 
             if(leaveAllocation == null)
             {
+                Console.WriteLine("User is null");
                 return false;
             }
+            Console.WriteLine($"User retrieved: {user.Id}");
+
             int daysRequested = (int)(model.EndDate.Value - model.StartDate.Value).TotalDays;
 
-            if(daysRequested > leaveAllocation.NumberOfDays)
+            
+            if (daysRequested > leaveAllocation.NumberOfDays)
             {
+                Console.WriteLine($"No leave allocation found for user {user.Id} and leave type {model.LeaveTypeId}");
+                return false;
+            }
+            Console.WriteLine($"Leave allocation retrieved: {leaveAllocation.NumberOfDays} days");
+
+            if (daysRequested > leaveAllocation.NumberOfDays)
+            {
+                Console.WriteLine($"Days requested ({daysRequested}) exceed allocation ({leaveAllocation.NumberOfDays})");
                 return false;
             }
             var leaveRequest = mapper.Map<LeaveRequest>(model);
@@ -55,6 +72,15 @@ namespace LeaveManagmentWebApp.Repositories
             leaveRequest.RequestingEmployeeId = user.Id;
 
             await AddAsync(leaveRequest);
+
+            Console.WriteLine("Leave request created and added to the database");
+
+
+            await emailSender.SendEmailAsync(user.Email, "Leave Request Submitted Successfully", $"Your leave request from "
+                + $"{leaveRequest.StartDate} to {leaveRequest.EndDate} has been submitted for approval");
+
+            Console.WriteLine("Confirmation email sent");
+
 
             return true;
         }
@@ -100,6 +126,9 @@ namespace LeaveManagmentWebApp.Repositories
 
             var user = await userManager.FindByIdAsync(leaveRequest.RequestingEmployeeId);
             var approvalStatus = approved ? "Approved" : "Declined";
+
+            await emailSender.SendEmailAsync(user.Email, $"Leave Request {approvalStatus}", $"Your leave request from "
+               + $"{leaveRequest.StartDate} to {leaveRequest.EndDate} has been {approvalStatus}l");
 
         }
 
@@ -161,6 +190,11 @@ namespace LeaveManagmentWebApp.Repositories
              var leaveRequest = await GetAsync(leaveReqestId);
             leaveRequest.Cancelled = true;
             await UpdateAsync(leaveRequest);
+
+           var user = await userManager.FindByIdAsync(leaveRequest.RequestingEmployeeId);
+
+            await emailSender.SendEmailAsync(user.Email, $"Leave Request Cancelled", $"Your leave request from "
+               + $"{leaveRequest.StartDate} to {leaveRequest.EndDate} has been Cancelled.");
         }
     }
 }

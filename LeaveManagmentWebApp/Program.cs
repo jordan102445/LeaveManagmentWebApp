@@ -10,6 +10,7 @@ using LeaveManagmentWebApp.Contracts;
 using LeaveManagmentWebApp.Repositories;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using LeaveManagmentWebApp.Services;
+using Serilog;
 
 
 
@@ -23,7 +24,6 @@ builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireC
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IEmailSender>(s => new EmailSender("localhost", 25 , "no-reply@leavemanagment.com"));
 
@@ -37,11 +37,23 @@ builder.Services.AddScoped<ILeaveRequestsRepository, LeaveRequestsRepository>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
+builder.Host.UseSerilog((ctx, lc) =>
+lc.WriteTo.Console()
+.ReadFrom.Configuration(ctx.Configuration));
+
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.

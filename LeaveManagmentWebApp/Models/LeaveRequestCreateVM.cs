@@ -22,11 +22,10 @@ namespace LeaveManagmentWebApp.Models
         [Required]
         [Display(Name = "Leave Type")]
         public int LeaveTypeId { get; set; }
-
-        public SelectList? LeaveTypes { get; set; }  // we use dropdown list for selectlist 
+        public SelectList LeaveTypes { get; set; }  // we use dropdown list for selectlist 
 
         [Display(Name ="Request Comments")]
-        public string? RequestComments { get; set; }
+        public string RequestComments { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -37,7 +36,7 @@ namespace LeaveManagmentWebApp.Models
 
             if(RequestComments?.Length > 250)
             {
-                yield return new ValidationResult("Comments are too long", new[] {nameof(RequestComments), nameof(EndDate) }); 
+                yield return new ValidationResult("Comments are too long", new[] {nameof(RequestComments)}); 
             }
             // yield return means only pause and return the item that is called to be return to be checked 
         }

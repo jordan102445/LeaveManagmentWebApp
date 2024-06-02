@@ -12,6 +12,8 @@ using LeaveManagmentWebApp.Contracts;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Authorization;
 using LeaveManagmentWebApp.Constants;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using LeaveManagmentWebApp.Repositories;
 
 namespace LeaveManagmentWebApp.Controllers
 {
@@ -20,11 +22,18 @@ namespace LeaveManagmentWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILeaveRequestsRepository leaveRequestsRepository;
+        private readonly iLeaveTypeRepositoty iLeaveTypeRepositoty;
+        private readonly ILogger<LeaveRequestsController> logger;
 
-        public LeaveRequestsController(ApplicationDbContext context,ILeaveRequestsRepository leaveRequestsRepository)
+        public LeaveRequestsController(ApplicationDbContext context,
+            ILeaveRequestsRepository leaveRequestsRepository,
+            iLeaveTypeRepositoty iLeaveTypeRepositoty,
+            ILogger<LeaveRequestsController> logger)
         {
             _context = context;
             this.leaveRequestsRepository = leaveRequestsRepository;
+            this.iLeaveTypeRepositoty = iLeaveTypeRepositoty;
+            this.logger = logger;
         }
 
         // GET: LeaveRequests
@@ -82,6 +91,7 @@ namespace LeaveManagmentWebApp.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Error Approving Request");
                 throw;
             }
 
@@ -100,6 +110,7 @@ namespace LeaveManagmentWebApp.Controllers
             }
             catch(Exception ex)
             {
+                logger.LogError(ex, "Error Cancelling Leave Request");
                 throw;
             }
 
@@ -107,11 +118,11 @@ namespace LeaveManagmentWebApp.Controllers
         }
 
         // GET: LeaveRequests/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var model = new LeaveRequestCreateVM
             {
-                LeaveTypes = new SelectList(_context.LeaveTypes, "Id", "Name"),
+                LeaveTypes = new SelectList(await iLeaveTypeRepositoty.GetAllAsync(), "Id", "Name"),
 
         };
             //ViewData["LeaveTypeId"] = new SelectList(_context.LeaveTypes, "Id", "Name"); // display the leaveTypeId(not as a id like a number the name of the leavetype)
@@ -136,17 +147,18 @@ namespace LeaveManagmentWebApp.Controllers
                     {
                         return RedirectToAction(nameof(MyLeave));
                     }
-                    ModelState.AddModelError(string.Empty, "You have exceeded you allocation with this request.");
+                   ModelState.AddModelError(string.Empty, "You have exceeded you allocation with this request.");
                    
 
                 }
             }
             catch(Exception ex)
             {
+                //logger.LogError(ex, "Error Creating Leave Request");
                 ModelState.AddModelError(string.Empty, "An Error Has Occured.Please Try Again Later"); // this ocurr because we didnt do the mapping 
             }
             
-            model.LeaveTypes = new SelectList(_context.LeaveTypes, "Id", "Name", model.LeaveTypeId);
+            model.LeaveTypes = new SelectList(await iLeaveTypeRepositoty.GetAllAsync(), "Id", "Name", model.LeaveTypeId);
             return View(model);
         }
 
