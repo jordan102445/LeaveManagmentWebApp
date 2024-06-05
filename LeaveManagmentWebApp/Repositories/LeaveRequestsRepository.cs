@@ -46,9 +46,9 @@ namespace LeaveManagmentWebApp.Repositories
             //leaveRequest.RequestingEmployeeId = user.Id;
 
             if(leaveAllocation == null)
-            {
-                Console.WriteLine("User is null");
-                return false;
+            { 
+               Console.WriteLine("User is null");
+               return false;
             }
             Console.WriteLine($"User retrieved: {user.Id}");
 

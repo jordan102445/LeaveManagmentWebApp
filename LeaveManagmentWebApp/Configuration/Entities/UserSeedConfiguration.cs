@@ -13,7 +13,7 @@ namespace LeaveManagmentWebApp.Configuration.Entities
             builder.HasData(
                 new Employee
                 {
-                    Id = "d414042k-da1f-4e74-c555-415b07f89b27",
+                    Id = "d614042k-da1f-4e74-c555-415b07f89b27",
                     Email = "admin@localhost.com",
                     NormalizedEmail = "ADMIN@LOCALHOST.COM",
                     NormalizedUserName = "admin@localhost.com",
@@ -27,7 +27,7 @@ namespace LeaveManagmentWebApp.Configuration.Entities
                 },
                  new Employee
                  {
-                     Id = "0kk1dc22-19f1-4216-9876-4f7a0f8fa5b4",
+                     Id = "0ck1dc22-19f1-4216-9876-4f7a0f8fa5b4",
                      Email = "user@localhost.com",
                      NormalizedEmail = "USER@LOCALHOST.COM",
                      NormalizedUserName = "user@localhost.com",
